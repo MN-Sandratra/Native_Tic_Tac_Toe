@@ -36,6 +36,11 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "fonts": [
+      {
+        "asset": "./assets/fonts/PressStart2P-Regular.ttf"
+      }
+    ]
   }
 }
