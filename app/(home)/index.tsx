@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
@@ -17,11 +18,15 @@ export default function HomeScreen() {
     'SpaceGrotesk-Medium': require('@/assets/fonts/SpaceGrotesk-Medium.ttf'),
   });
 
+  const currentYear =new Date().getFullYear()
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  const router = useRouter();
 
   if (!fontsLoaded) return null;
 
@@ -31,7 +36,7 @@ export default function HomeScreen() {
         colors={['#0F172A', '#1E293B']}
         style={StyleSheet.absoluteFill}
       />
-            
+
       <TouchableOpacity style={styles.settingsButton} onPress={() => {}}>
         <FontAwesome5 name="cog" size={20} color="#fff" />
       </TouchableOpacity>
@@ -51,7 +56,10 @@ export default function HomeScreen() {
           <Text style={styles.menuTitle}>SELECT MODE</Text>
           
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.menuButton}>
+            <TouchableOpacity 
+              style={styles.menuButton}
+              onPress={() => router.push('/(game)/player-select')}
+            >
               <View style={styles.buttonContent}>
                 <View style={styles.iconContainer}>
                   <FontAwesome5 name="user-friends" size={20} color="#818CF8" />
@@ -79,7 +87,7 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.copyright}>© 2024 Tic Tac Toe</Text>
+        <Text style={styles.copyright}>© {currentYear} Tic Tac Toe - Sandratra</Text>
         <Text style={styles.version}>v1.0.0</Text>
       </View>
     </View>
@@ -143,6 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.03)',
     padding: 20,
+    marginTop:20,
     borderRadius: 20,
   },
   buttonContainer: {

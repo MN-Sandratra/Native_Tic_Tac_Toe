@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import gameReducer from './slices/gameSlice';
 import {
   FLUSH,
   REHYDRATE,
@@ -9,10 +8,11 @@ import {
   PERSIST,
 } from "redux-persist";
 import { middleware } from "@/store/store.middleware";
+import playerSlice from "./slices/playerSlice";
 
 export const store = configureStore({
   reducer: {
-    game: gameReducer,
+    players: playerSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -22,5 +22,7 @@ export const store = configureStore({
     }).concat(middleware),
 });
 
-export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+
