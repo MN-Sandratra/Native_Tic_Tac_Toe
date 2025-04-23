@@ -41,6 +41,21 @@
       {
         "asset": "./assets/fonts/PressStart2P-Regular.ttf"
       }
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2619075a-a05a-4204-87ab-4be7503af970"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2619075a-a05a-4204-87ab-4be7503af970"
+    },
+    "owner": "mn_sandratra"
   }
 }
