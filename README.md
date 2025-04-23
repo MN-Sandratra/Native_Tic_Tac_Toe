@@ -1,50 +1,130 @@
-# Welcome to your Expo app 👋
+# Tic Tac Toe Game
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern and stylish Tic Tac Toe game built with React Native and Expo.
 
-## Get started
+## Features
 
-1. Install dependencies
+### Current Features ✅
 
-   ```bash
-   npm install
-   ```
+- **Local Multiplayer Mode**
+  - Play against a friend on the same device
+  - Player name customization
+  - Dynamic turn indicators
+  - Victory and draw detection
+  - Game state management with Redux
 
-2. Start the app
+- **Modern UI/UX**
+  - Clean and responsive design
+  - Smooth animations and transitions
+  - Color-coded players (X: Blue, O: Pink)
+  - Game status indicators
+  - End game modal with replay option
 
-   ```bash
-    npx expo start
-   ```
+- **Game Features**
+  - Interactive game board
+  - Player turn tracking
+  - Win/Draw detection
+  - Score tracking within session
+  - Return to menu option
 
-In the output, you'll find options to open the app in a
+### Planned Features 🚀
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Online Multiplayer**
+  - Real-time gameplay with WebSocket
+  - Friend invitation system
+  - Online player matching
+  - Game rooms
+  - Chat functionality
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **AI Opponent**
+  - Single player mode
+  - Multiple difficulty levels
+  - AI strategy visualization
+  - Training mode
 
-## Get a fresh project
+- **Additional Features**
+  - Multiple languages support
+    - English (current)
+    - French
+    - Malagasy
+    - Spanish
+    - Others based on demand
+  - Customizable themes
+  - Sound effects
+  - Haptic feedback
+  - Player statistics
+  - Achievement system
 
-When you're ready, run:
+- **Technical Improvements**
+  - Offline mode support
+  - Game state persistence
+  - Performance optimizations
+  - Cross-platform testing
+  - Accessibility features
 
+## Installation
+
+1. Clone the repository
+
+2. Install dependencies
 ```bash
-npm run reset-project
+cd tic-tac-toe
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+3. Start the development server
+```bash
+npm start
+```
 
-## Learn more
+## Tech Stack
 
-To learn more about developing your project with Expo, look at the following resources:
+- React Native
+- Expo
+- Redux Toolkit
+- TypeScript
+- React Navigation
+- Expo Linear Gradient
+- Expo Blur
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Contributing
 
-## Join the community
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Join our community of developers creating universal apps.
+### Development Roadmap
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. **Phase 1 - Core Improvements**
+   - Add unit tests
+   - Implement persistent storage
+   - Add settings menu
+   - Improve accessibility
+
+2. **Phase 2 - Online Features**
+   - Backend setup
+   - User authentication
+   - Real-time multiplayer
+   - Leaderboards
+
+3. **Phase 3 - Enhanced Features**
+   - AI implementation
+   - Multiple languages
+   - Custom themes
+   - Advanced statistics
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Design inspiration from modern UI trends
+- Community feedback and suggestions
+- Open source contributors
+
+## Contact
+
+For any questions or suggestions, please open an issue or contact the maintainers.
+
+---
+
+Made with ❤️ by Sandratra

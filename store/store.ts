@@ -9,10 +9,12 @@ import {
 } from "redux-persist";
 import { middleware } from "@/store/store.middleware";
 import playerSlice from "./slices/playerSlice";
+import gameSlice from "./slices/gameSlice";
 
 export const store = configureStore({
   reducer: {
     players: playerSlice,
+    game: gameSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
