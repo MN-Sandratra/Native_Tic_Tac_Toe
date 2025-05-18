@@ -43,6 +43,14 @@ export default function HomeScreen() {
             />
 
             <MenuButton
+              icon="wifi"
+              iconColor="#34D399"
+              title="ONLINE MULTIPLAYER"
+              subtitle="Invite or join a remote match"
+              onPress={() => router.push('/(online)/lobby')}
+            />
+
+            <MenuButton
               icon="robot"
               iconColor="#F472B6"
               title="VS AI"

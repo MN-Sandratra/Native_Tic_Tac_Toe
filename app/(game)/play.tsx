@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -8,26 +8,28 @@ import { resetPlayers } from '@/store/slices/playerSlice';
 import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 
-const { width } = Dimensions.get('window');
-const isLargeScreen = width > 768;
-
 const winningCombinations = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Lignes
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colonnes
-  [0, 4, 8], [2, 4, 6]             // Diagonales
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8], // Lignes
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8], // Colonnes
+  [0, 4, 8],
+  [2, 4, 6], // Diagonales
 ];
 
 export default function PlayScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const gameState = useAppSelector(state => state.game) || {
+  const gameState = useAppSelector((state) => state.game) || {
     board: Array(9).fill(null),
     currentPlayer: 'X',
     winner: null,
-    isGameOver: false
+    isGameOver: false,
   };
   const { board, currentPlayer, winner, isGameOver } = gameState;
-  const { player1, player2 } = useAppSelector(state => state.players);
+  const { player1, player2 } = useAppSelector((state) => state.players);
 
   const [showExitDialog, setShowExitDialog] = useState(false);
 
@@ -60,7 +62,7 @@ export default function PlayScreen() {
         return board[a];
       }
     }
-    if (board.every(cell => cell !== null)) {
+    if (board.every((cell) => cell !== null)) {
       return 'draw';
     }
     return null;
@@ -90,6 +92,7 @@ export default function PlayScreen() {
       if (winner === 'draw') {
         return "It's a Draw!";
       }
+
       const winningPlayer = winner === player1?.symbol ? player1?.name : player2?.name;
       return `${winningPlayer} Wins!`;
     }
@@ -99,25 +102,20 @@ export default function PlayScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#0F172A', '#1E293B']}
-        style={StyleSheet.absoluteFill}
-      />
+      <LinearGradient colors={['#0F172A', '#1E293B']} style={StyleSheet.absoluteFill} />
 
-      <TouchableOpacity 
-        style={styles.backButton} 
-        onPress={handleBack}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <FontAwesome5 name="arrow-left" size={20} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.gameContainer}>
         <View style={styles.header}>
           <View style={styles.playersContainer}>
-            <View style={[
-              styles.playerCard, 
-              currentPlayer === 'X' && !isGameOver && styles.activePlayer
-            ]}>
+            <View
+              style={[
+                styles.playerCard,
+                currentPlayer === 'X' && !isGameOver && styles.activePlayer,
+              ]}>
               <Text style={styles.playerName}>{player1?.name}</Text>
               <View style={[styles.symbolBadge, { backgroundColor: 'rgba(129, 140, 248, 0.2)' }]}>
                 <Text style={[styles.symbolText, { color: '#818CF8' }]}>X</Text>
@@ -128,10 +126,11 @@ export default function PlayScreen() {
               <Text style={styles.vsText}>VS</Text>
             </View>
 
-            <View style={[
-              styles.playerCard, 
-              currentPlayer === 'O' && !isGameOver && styles.activePlayer
-            ]}>
+            <View
+              style={[
+                styles.playerCard,
+                currentPlayer === 'O' && !isGameOver && styles.activePlayer,
+              ]}>
               <Text style={styles.playerName}>{player2?.name}</Text>
               <View style={[styles.symbolBadge, { backgroundColor: 'rgba(244, 114, 182, 0.2)' }]}>
                 <Text style={[styles.symbolText, { color: '#F472B6' }]}>O</Text>
@@ -140,10 +139,8 @@ export default function PlayScreen() {
           </View>
 
           {!isGameOver && (
-            <Text style={[
-              styles.turnStatus,
-              { color: currentPlayer === 'X' ? '#818CF8' : '#F472B6' }
-            ]}>
+            <Text
+              style={[styles.turnStatus, { color: currentPlayer === 'X' ? '#818CF8' : '#F472B6' }]}>
               {getGameStatus()}
             </Text>
           )}
@@ -160,19 +157,19 @@ export default function PlayScreen() {
                   borderLeftWidth: index % 3 === 0 ? 0 : 2,
                   borderRightWidth: 0,
                   borderBottomWidth: 0,
-                }
+                },
               ]}
               onPress={() => handleCellPress(index)}
-              disabled={!!cell || isGameOver}
-            >
+              disabled={!!cell || isGameOver}>
               {cell && (
-                <Text style={[
-                  styles.cellText,
-                  { 
-                    color: cell === 'X' ? '#818CF8' : '#F472B6',
-                    transform: [{ scale: 1.2 }]
-                  }
-                ]}>
+                <Text
+                  style={[
+                    styles.cellText,
+                    {
+                      color: cell === 'X' ? '#818CF8' : '#F472B6',
+                      transform: [{ scale: 1.2 }],
+                    },
+                  ]}>
                   {cell}
                 </Text>
               )}
@@ -189,25 +186,26 @@ export default function PlayScreen() {
               <Text style={styles.modalTitle}>
                 {winner === 'draw' ? "It's a Draw!" : 'Victory!'}
               </Text>
-              
+
               {winner !== 'draw' && (
                 <View style={styles.winnerInfo}>
                   <Text style={styles.winnerName}>
                     {winner === 'X' ? player1?.name : player2?.name}
                   </Text>
-                  <View style={[
-                    styles.symbolBadge,
-                    { 
-                      backgroundColor: winner === 'X' ? 
-                        'rgba(129, 140, 248, 0.2)' : 
-                        'rgba(244, 114, 182, 0.2)',
-                      transform: [{ scale: 1.5 }]
-                    }
-                  ]}>
-                    <Text style={[
-                      styles.symbolText,
-                      { color: winner === 'X' ? '#818CF8' : '#F472B6' }
+                  <View
+                    style={[
+                      styles.symbolBadge,
+                      {
+                        backgroundColor:
+                          winner === 'X' ? 'rgba(129, 140, 248, 0.2)' : 'rgba(244, 114, 182, 0.2)',
+                        transform: [{ scale: 1.5 }],
+                      },
                     ]}>
+                    <Text
+                      style={[
+                        styles.symbolText,
+                        { color: winner === 'X' ? '#818CF8' : '#F472B6' },
+                      ]}>
                       {winner}
                     </Text>
                   </View>
@@ -217,8 +215,7 @@ export default function PlayScreen() {
               <View style={styles.modalActions}>
                 <TouchableOpacity
                   style={[styles.modalButton, styles.restartButton]}
-                  onPress={handleRestart}
-                >
+                  onPress={handleRestart}>
                   <FontAwesome5 name="redo" size={20} color="#fff" style={styles.buttonIcon} />
                   <Text style={styles.buttonText}>PLAY AGAIN</Text>
                 </TouchableOpacity>
@@ -229,8 +226,7 @@ export default function PlayScreen() {
                     dispatch(resetGame());
                     dispatch(resetPlayers());
                     router.replace('/(home)');
-                  }}
-                >
+                  }}>
                   <FontAwesome5 name="home" size={20} color="#fff" style={styles.buttonIcon} />
                   <Text style={styles.buttonText}>MENU</Text>
                 </TouchableOpacity>
@@ -248,16 +244,14 @@ export default function PlayScreen() {
               Voulez-vous vraiment quitter ? La partie sera perdue.
             </Text>
             <View style={styles.dialogButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.dialogButton, styles.cancelButton]}
-                onPress={() => setShowExitDialog(false)}
-              >
+                onPress={() => setShowExitDialog(false)}>
                 <Text style={styles.dialogButtonText}>Annuler</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={[styles.dialogButton, styles.confirmButton]}
-                onPress={handleExitConfirm}
-              >
+                onPress={handleExitConfirm}>
                 <Text style={styles.dialogButtonText}>Quitter</Text>
               </TouchableOpacity>
             </View>
@@ -486,4 +480,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
-}); 
+});
