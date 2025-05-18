@@ -14,18 +14,20 @@ export default function PlayerSelectScreen() {
   const [playerName, setPlayerName] = useState('');
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const player1 = useAppSelector(state => state.players.player1);
+  const player1 = useAppSelector((state) => state.players.player1);
 
   const isPlayer2Setup = !!player1;
   const currentSymbol = isPlayer2Setup ? (player1.symbol === 'X' ? 'O' : 'X') : 'X';
 
   const handleContinue = () => {
     if (playerName.trim()) {
-      dispatch(setPlayer({
-        playerNumber: isPlayer2Setup ? 2 : 1,
-        name: playerName.trim(),
-        symbol: currentSymbol,
-      }));
+      dispatch(
+        setPlayer({
+          playerNumber: isPlayer2Setup ? 2 : 1,
+          name: playerName.trim(),
+          symbol: currentSymbol,
+        })
+      );
 
       if (isPlayer2Setup) {
         router.push('/(game)/play');
@@ -41,29 +43,20 @@ export default function PlayerSelectScreen() {
   };
 
   // Définir les couleurs en fonction du joueur
-  const gradientColors = isPlayer2Setup 
+  const gradientColors = isPlayer2Setup
     ? ['#4A1D96', '#7C3AED'] // Violet pour le joueur 2
     : ['#0F172A', '#1E293B']; // Bleu foncé pour le joueur 1
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#0F172A', '#1E293B']}
-        style={StyleSheet.absoluteFill}
-      />
+      <LinearGradient colors={['#0F172A', '#1E293B']} style={StyleSheet.absoluteFill} />
 
-      <TouchableOpacity 
-        style={styles.backButton} 
-        onPress={() => router.back()}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <FontAwesome5 name="arrow-left" size={20} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={[
-          styles.title,
-          { color: isPlayer2Setup ? '#DDD6FE' : '#ffffff' }
-        ]}>
+        <Text style={[styles.title, { color: isPlayer2Setup ? '#DDD6FE' : '#ffffff' }]}>
           {isPlayer2Setup ? 'PLAYER 2 SETUP' : 'PLAYER 1 SETUP'}
         </Text>
 
@@ -75,10 +68,7 @@ export default function PlayerSelectScreen() {
               <View style={styles.symbolBadge}>
                 <Text style={styles.symbolBadgeText}>{player1.symbol}</Text>
               </View>
-              <TouchableOpacity 
-                style={styles.deleteButton}
-                onPress={handleResetPlayer1}
-              >
+              <TouchableOpacity style={styles.deleteButton} onPress={handleResetPlayer1}>
                 <FontAwesome5 name="trash" size={16} color="#FF4B4B" />
               </TouchableOpacity>
             </View>
@@ -100,14 +90,12 @@ export default function PlayerSelectScreen() {
 
         <View style={styles.symbolContainer}>
           <Text style={styles.label}>YOUR SYMBOL</Text>
-          <View style={[
-            styles.symbolDisplay,
-            isPlayer2Setup && { backgroundColor: 'rgba(124, 58, 237, 0.1)' }
-          ]}>
-            <Text style={[
-              styles.symbolText,
-              isPlayer2Setup && { color: '#7C3AED' }
+          <View
+            style={[
+              styles.symbolDisplay,
+              isPlayer2Setup && { backgroundColor: 'rgba(124, 58, 237, 0.1)' },
             ]}>
+            <Text style={[styles.symbolText, isPlayer2Setup && { color: '#7C3AED' }]}>
               {currentSymbol}
             </Text>
           </View>
@@ -116,8 +104,7 @@ export default function PlayerSelectScreen() {
         <TouchableOpacity
           style={[styles.continueButton, !playerName.trim() && styles.disabledButton]}
           onPress={handleContinue}
-          disabled={!playerName.trim()}
-        >
+          disabled={!playerName.trim()}>
           <Text style={styles.continueButtonText}>
             {isPlayer2Setup ? 'START GAME' : 'NEXT PLAYER'}
           </Text>
@@ -257,4 +244,4 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: 'rgba(255, 75, 75, 0.1)',
   },
-}); 
+});

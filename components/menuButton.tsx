@@ -1,6 +1,5 @@
-import { useIsLargeScreen } from '@/hooks/useIsLargeScreen';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface MenuButtonProps {
   icon: string;
@@ -11,7 +10,8 @@ interface MenuButtonProps {
 }
 
 export const MenuButton = ({ icon, iconColor, title, subtitle, onPress }: MenuButtonProps) => {
-  const isLargeScreen = useIsLargeScreen();
+  const { width } = Dimensions.get('window');
+  const isLargeScreen = width > 768;
 
   return (
     <TouchableOpacity style={styles.menuButton} onPress={onPress}>
