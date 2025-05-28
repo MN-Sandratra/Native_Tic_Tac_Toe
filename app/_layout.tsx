@@ -1,8 +1,16 @@
-import { Stack } from "expo-router";
-import StoreProvider from "@/store/store.provider";
-import { StatusBar } from "expo-status-bar";
+import { Stack } from 'expo-router';
+import StoreProvider from '@/store/store.provider';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { initAnonymousAuth } from '@/utils/firebase/config';
 
 export default function RootLayout() {
+  useEffect(() => {
+    initAnonymousAuth().catch((err) => {
+      console.error('Auth error:', err);
+    });
+  }, []);
+
   return (
     <StoreProvider>
       <StatusBar style="light" />
