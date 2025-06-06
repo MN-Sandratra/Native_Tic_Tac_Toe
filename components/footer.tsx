@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+
   return (
     <View style={styles.footer}>
       <Text style={styles.copyright}>© {currentYear} Tic Tac Toe - Sandratra</Text>

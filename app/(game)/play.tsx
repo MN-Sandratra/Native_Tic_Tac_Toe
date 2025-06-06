@@ -23,15 +23,18 @@ const winningCombinations = [
 export default function PlayScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
   const gameState = useAppSelector((state) => state.game) || {
     board: Array(9).fill(null),
     currentPlayer: 'X',
     winner: null,
     isGameOver: false,
   };
-  const { board, currentPlayer, winner, isGameOver, gameMode } = gameState;
   const { player1, player2 } = useAppSelector((state) => state.players);
+  const localPlayer = useAppSelector((state) => state.lobby.localPlayer);
   const { roomCode } = useAppSelector((state) => state.lobby);
+
+  const { board, currentPlayer, winner, isGameOver, gameMode } = gameState;
 
   const [showExitDialog, setShowExitDialog] = useState(false);
 
@@ -43,14 +46,6 @@ export default function PlayScreen() {
     dispatch(resetPlayers());
     dispatch(resetGame());
     router.replace('/(home)');
-  };
-
-  const getCurrentPlayerInfo = () => {
-    if (currentPlayer === player1?.symbol) return { player: player1, color: '#818CF8' };
-
-    if (currentPlayer === player2?.symbol) return { player: player2, color: '#F472B6' };
-
-    return { player: null, color: '#fff' };
   };
 
   const checkWinner = () => {
@@ -69,11 +64,13 @@ export default function PlayScreen() {
   };
 
   const handleCellPress = (index: number) => {
-    if (board[index] || winner || isGameOver) {
-      return;
-    }
+    if (board[index] || winner || isGameOver) return;
+
+    const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
 
     if (gameMode === 'multiplayer') {
+      if (gameState.currentPlayer !== currentPlayerSymbol) return;
+
       const newGameState = { ...gameState };
       newGameState.board = [...gameState.board];
       newGameState.board[index] = gameState.currentPlayer;

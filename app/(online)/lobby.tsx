@@ -30,7 +30,9 @@ export default function LobbyScreen() {
   const [playerName, setPlayerName] = useState('');
   const [copyMessage, setCopyMessage] = useState('');
   const [roomInput, setRoomInput] = useState('');
+
   const router = useRouter();
+
   const dispatch = useAppDispatch();
 
   const { roomCode, players, error, createLoading, joinLoading, inLobby } = useAppSelector(
@@ -58,21 +60,27 @@ export default function LobbyScreen() {
 
   const handleStartGame = async () => {
     if (!roomCode) return;
+
     const roomRef = doc(db, `rooms/${roomCode}`);
+
     await updateDoc(roomRef, { gameStarted: true });
   };
 
   useEffect(() => {
     if (!roomCode || !inLobby) return;
+
     const unsubscribe = LobbyService.listen(roomCode, (players) => {
       dispatch(setPlayers(players));
     });
+
     return () => typeof unsubscribe === 'function' && unsubscribe();
   }, [roomCode, inLobby]);
 
   useEffect(() => {
     if (!roomCode || !inLobby) return;
+
     const roomRef = doc(db, `rooms/${roomCode}`);
+
     const unsubscribe = onSnapshot(roomRef, (snapshot) => {
       const data = snapshot.data();
       if (data?.gameStarted && players.length >= 2) {
@@ -80,6 +88,7 @@ export default function LobbyScreen() {
         dispatch(setPlayer({ playerNumber: 2, name: players[1], symbol: 'O' }));
       }
     });
+
     return () => unsubscribe();
   }, [roomCode, inLobby, players]);
 
