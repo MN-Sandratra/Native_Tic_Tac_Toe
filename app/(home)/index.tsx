@@ -6,13 +6,15 @@ import { Footer } from '@/components/footer';
 import { Logo } from '@/components/logo';
 import { useLoadFonts } from '@/hooks/useLoadFont';
 import { MenuButton } from '@/components/menuButton';
+import { useAppDispatch } from '@/store/store.hook';
+import { setGameMode } from '@/store/slices/gameSlice';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
 
 export default function HomeScreen() {
   const { fontsLoaded, onLayoutRootView } = useLoadFonts();
-
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   if (!fontsLoaded) return null;
@@ -39,7 +41,10 @@ export default function HomeScreen() {
               iconColor="#818CF8"
               title="LOCAL MULTIPLAYER"
               subtitle="Play with a friend"
-              onPress={() => router.push('/(game)/player-select')}
+              onPress={() => {
+                dispatch(setGameMode('solo'));
+                router.push('/(game)/player-select');
+              }}
             />
 
             <MenuButton
@@ -47,7 +52,10 @@ export default function HomeScreen() {
               iconColor="#34D399"
               title="ONLINE MULTIPLAYER"
               subtitle="Invite or join a remote match"
-              onPress={() => router.push('/(online)/lobby')}
+              onPress={() => {
+                dispatch(setGameMode('multiplayer'));
+                router.push('/(online)/lobby');
+              }}
             />
 
             <MenuButton

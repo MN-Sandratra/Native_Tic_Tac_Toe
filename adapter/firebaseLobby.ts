@@ -22,6 +22,7 @@ export const firebaseLobby: ILobbyService = {
     await setDoc(roomRef, {
       createdAt: Date.now(),
       players: [playerName],
+      gameStarted: false,
     });
   },
 

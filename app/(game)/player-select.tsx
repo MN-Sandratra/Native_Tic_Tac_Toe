@@ -11,9 +11,11 @@ const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
 
 export default function PlayerSelectScreen() {
-  const [playerName, setPlayerName] = useState('');
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const [playerName, setPlayerName] = useState('');
+
   const player1 = useAppSelector((state) => state.players.player1);
 
   const isPlayer2Setup = !!player1;
@@ -42,10 +44,10 @@ export default function PlayerSelectScreen() {
     setPlayerName('');
   };
 
-  // Définir les couleurs en fonction du joueur
+  // Defined players colors
   const gradientColors = isPlayer2Setup
-    ? ['#4A1D96', '#7C3AED'] // Violet pour le joueur 2
-    : ['#0F172A', '#1E293B']; // Bleu foncé pour le joueur 1
+    ? ['#4A1D96', '#7C3AED'] // purple: player 2
+    : ['#0F172A', '#1E293B']; // Blue: player 1
 
   return (
     <View style={styles.container}>

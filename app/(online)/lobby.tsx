@@ -19,6 +19,9 @@ import { PlayerList } from '@/components/playerList';
 import { useAppDispatch, useAppSelector } from '@/store/store.hook';
 import { createRoom, joinRoom, setPlayers } from '@/store/slices/lobbySlice';
 import { LobbyService } from '@/services/lobby/lobbyService';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { db } from '@/utils/firebase/config';
+import { setPlayer } from '@/store/slices/playerSlice';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
@@ -27,43 +30,73 @@ export default function LobbyScreen() {
   const [playerName, setPlayerName] = useState('');
   const [copyMessage, setCopyMessage] = useState('');
   const [roomInput, setRoomInput] = useState('');
+
   const router = useRouter();
+
   const dispatch = useAppDispatch();
 
   const { roomCode, players, error, createLoading, joinLoading, inLobby } = useAppSelector(
     (state) => state.lobby
   );
+  const { player1, player2 } = useAppSelector((state) => state.players);
 
-  const handleCreateRoom = async () => {
+  const handleCreateRoom = () => {
     if (!playerName.trim()) return;
-
     dispatch(createRoom(playerName));
   };
 
-  const handleJoinRoom = async () => {
+  const handleJoinRoom = () => {
     if (!playerName.trim() || !roomInput.trim()) return;
-
     dispatch(joinRoom({ roomCode: roomInput.toUpperCase(), playerName }));
   };
 
   const handleCopyRoomCode = async () => {
     if (roomCode) {
       await Clipboard.setStringAsync(roomCode);
-
       setCopyMessage('Room code copied!');
       setTimeout(() => setCopyMessage(''), 2000);
     }
   };
 
-  const handleStartGame = () => {};
+  const handleStartGame = async () => {
+    if (!roomCode) return;
+
+    const roomRef = doc(db, `rooms/${roomCode}`);
+
+    await updateDoc(roomRef, { gameStarted: true });
+  };
 
   useEffect(() => {
     if (!roomCode || !inLobby) return;
 
-    LobbyService.listen(roomCode, (players) => {
+    const unsubscribe = LobbyService.listen(roomCode, (players) => {
       dispatch(setPlayers(players));
     });
+
+    return () => typeof unsubscribe === 'function' && unsubscribe();
   }, [roomCode, inLobby]);
+
+  useEffect(() => {
+    if (!roomCode || !inLobby) return;
+
+    const roomRef = doc(db, `rooms/${roomCode}`);
+
+    const unsubscribe = onSnapshot(roomRef, (snapshot) => {
+      const data = snapshot.data();
+      if (data?.gameStarted && players.length >= 2) {
+        dispatch(setPlayer({ playerNumber: 1, name: players[0], symbol: 'X' }));
+        dispatch(setPlayer({ playerNumber: 2, name: players[1], symbol: 'O' }));
+      }
+    });
+
+    return () => unsubscribe();
+  }, [roomCode, inLobby, players]);
+
+  useEffect(() => {
+    if (player1 && player2) {
+      router.replace('/(game)/play');
+    }
+  }, [player1, player2]);
 
   return (
     <View style={styles.container}>

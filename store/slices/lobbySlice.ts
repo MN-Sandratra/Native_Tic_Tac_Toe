@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 interface LobbyState {
   roomCode: string;
   players: string[];
+  localPlayer: string;
   inLobby: boolean;
   error: string | null;
   createLoading: boolean;
@@ -13,6 +14,7 @@ interface LobbyState {
 const initialState: LobbyState = {
   roomCode: '',
   players: [],
+  localPlayer: '',
   inLobby: false,
   error: null,
   createLoading: false,
@@ -69,6 +71,7 @@ const lobbySlice = createSlice({
         state.createLoading = false;
         state.roomCode = action.payload.code;
         state.inLobby = true;
+        state.localPlayer = action.meta.arg;
       })
       .addCase(createRoom.rejected, (state, action) => {
         state.createLoading = false;
@@ -83,6 +86,7 @@ const lobbySlice = createSlice({
         state.joinLoading = false;
         state.roomCode = action.payload.roomCode;
         state.inLobby = true;
+        state.localPlayer = action.meta.arg.playerName;
       })
       .addCase(joinRoom.rejected, (state, action) => {
         state.joinLoading = false;

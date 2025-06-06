@@ -28,11 +28,16 @@ const gameSlice = createSlice({
       }
 
       state.board[action.payload] = state.currentPlayer;
-      
+
       const winningCombos = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
       ];
 
       for (const combo of winningCombos) {
@@ -48,7 +53,7 @@ const gameSlice = createSlice({
         }
       }
 
-      if (state.board.every(cell => cell !== null)) {
+      if (state.board.every((cell) => cell !== null)) {
         state.winner = 'draw';
         state.isGameOver = true;
         return;
@@ -71,9 +76,15 @@ const gameSlice = createSlice({
     setWinner: (state, action: PayloadAction<Player>) => {
       state.winner = action.payload;
       state.isGameOver = true;
-    }
+    },
+
+    syncWithOnlineGame: (state, action: PayloadAction<GameState>) => {
+      return action.payload;
+    },
   },
 });
 
-export const { makeMove, setGameMode, resetGame, setWinner } = gameSlice.actions;
-export default gameSlice.reducer; 
+export const { makeMove, setGameMode, resetGame, setWinner, syncWithOnlineGame } =
+  gameSlice.actions;
+export type { GameState };
+export default gameSlice.reducer;

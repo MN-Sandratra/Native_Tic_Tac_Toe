@@ -3,10 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/store/store.hook';
-import { makeMove, resetGame, setWinner } from '@/store/slices/gameSlice';
+import { makeMove, resetGame, setWinner, syncWithOnlineGame } from '@/store/slices/gameSlice';
 import { resetPlayers } from '@/store/slices/playerSlice';
 import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
+import { firebaseGame } from '@/adapter/firebaseGame';
 
 const winningCombinations = [
   [0, 1, 2],
@@ -22,22 +23,20 @@ const winningCombinations = [
 export default function PlayScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
   const gameState = useAppSelector((state) => state.game) || {
     board: Array(9).fill(null),
     currentPlayer: 'X',
     winner: null,
     isGameOver: false,
   };
-  const { board, currentPlayer, winner, isGameOver } = gameState;
   const { player1, player2 } = useAppSelector((state) => state.players);
+  const localPlayer = useAppSelector((state) => state.lobby.localPlayer);
+  const { roomCode } = useAppSelector((state) => state.lobby);
+
+  const { board, currentPlayer, winner, isGameOver, gameMode } = gameState;
 
   const [showExitDialog, setShowExitDialog] = useState(false);
-
-  useEffect(() => {
-    if (!player1 || !player2) {
-      router.replace('/(game)/player-select');
-    }
-  }, [player1, player2]);
 
   const handleBack = () => {
     setShowExitDialog(true);
@@ -49,36 +48,36 @@ export default function PlayScreen() {
     router.replace('/(home)');
   };
 
-  const getCurrentPlayerInfo = () => {
-    if (currentPlayer === player1?.symbol) return { player: player1, color: '#818CF8' };
-    if (currentPlayer === player2?.symbol) return { player: player2, color: '#F472B6' };
-    return { player: null, color: '#fff' };
-  };
-
   const checkWinner = () => {
     for (const combo of winningCombinations) {
       const [a, b, c] = combo;
+
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
         return board[a];
       }
     }
+
     if (board.every((cell) => cell !== null)) {
       return 'draw';
     }
     return null;
   };
 
-  useEffect(() => {
-    const result = checkWinner();
-    if (result && result !== 'draw') {
-      dispatch(setWinner(result));
-    } else if (result === 'draw') {
-      dispatch(setWinner('draw'));
-    }
-  }, [board]);
-
   const handleCellPress = (index: number) => {
-    if (!board[index] && !winner && !isGameOver) {
+    if (board[index] || winner || isGameOver) return;
+
+    const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
+
+    if (gameMode === 'multiplayer') {
+      if (gameState.currentPlayer !== currentPlayerSymbol) return;
+
+      const newGameState = { ...gameState };
+      newGameState.board = [...gameState.board];
+      newGameState.board[index] = gameState.currentPlayer;
+      newGameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+
+      firebaseGame.update(roomCode, newGameState);
+    } else {
       dispatch(makeMove(index));
     }
   };
@@ -99,6 +98,33 @@ export default function PlayScreen() {
     const currentPlayerName = currentPlayer === player1?.symbol ? player1?.name : player2?.name;
     return `${currentPlayerName}'s Turn`;
   };
+
+  useEffect(() => {
+    const result = checkWinner();
+
+    if (result && result !== 'draw') {
+      dispatch(setWinner(result));
+    } else if (result === 'draw') {
+      dispatch(setWinner('draw'));
+    }
+  }, [board]);
+
+  useEffect(() => {
+    if (!player1 || !player2) {
+      router.replace('/(game)/player-select');
+    }
+  }, [player1, player2]);
+
+  useEffect(() => {
+    if (gameState.gameMode !== 'multiplayer') return;
+    if (!roomCode) return;
+
+    const unsubscribe = firebaseGame.listen(roomCode, (game) => {
+      dispatch(syncWithOnlineGame(game));
+    });
+
+    return () => unsubscribe?.();
+  }, [roomCode, gameState.gameMode]);
 
   return (
     <View style={styles.container}>
