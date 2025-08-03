@@ -1,3 +1,4 @@
+import { checkWinner } from '@/utils/gamesLogic/checkWinner';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type Player = 'X' | 'O' | 'draw' | null;
@@ -12,7 +13,7 @@ interface GameState {
 
 const initialState: GameState = {
   board: Array(9).fill(null),
-  currentPlayer: 'X',
+  currentPlayer: Math.random() < 0.5 ? 'X' : 'O',
   winner: null,
   gameMode: 'multiplayer',
   isGameOver: false,
@@ -23,43 +24,19 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     makeMove: (state, action: PayloadAction<number>) => {
-      if (state.board[action.payload] || state.isGameOver) {
-        return;
-      }
+      const index = action.payload;
+      if (state.board[index] || state.isGameOver) return;
 
-      state.board[action.payload] = state.currentPlayer;
+      state.board[index] = state.currentPlayer;
 
-      const winningCombos = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-      ];
+      const winner = checkWinner(state.board);
 
-      for (const combo of winningCombos) {
-        const [a, b, c] = combo;
-        if (
-          state.board[a] &&
-          state.board[a] === state.board[b] &&
-          state.board[a] === state.board[c]
-        ) {
-          state.winner = state.currentPlayer;
-          state.isGameOver = true;
-          return;
-        }
-      }
-
-      if (state.board.every((cell) => cell !== null)) {
-        state.winner = 'draw';
+      if (winner) {
+        state.winner = winner;
         state.isGameOver = true;
-        return;
+      } else {
+        state.currentPlayer = state.currentPlayer === 'X' ? 'O' : 'X';
       }
-
-      state.currentPlayer = state.currentPlayer === 'X' ? 'O' : 'X';
     },
 
     setGameMode: (state, action: PayloadAction<'solo' | 'multiplayer'>) => {
@@ -68,7 +45,7 @@ const gameSlice = createSlice({
 
     resetGame: (state) => {
       state.board = Array(9).fill(null);
-      state.currentPlayer = 'X';
+      state.currentPlayer = Math.random() < 0.5 ? 'X' : 'O';
       state.winner = null;
       state.isGameOver = false;
     },

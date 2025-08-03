@@ -9,7 +9,7 @@ export const firebaseGame: IOnlineGameService = {
 
     const initialState: GameState = {
       board: Array(9).fill(null),
-      currentPlayer: 'X',
+      currentPlayer: Math.random() < 0.5 ? 'X' : 'O',
       winner: null,
       gameMode: 'multiplayer',
       isGameOver: false,
