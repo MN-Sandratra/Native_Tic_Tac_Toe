@@ -8,6 +8,7 @@ import { resetPlayers } from '@/store/slices/playerSlice';
 import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 import { firebaseGame } from '@/adapter/firebaseGame';
+import { checkWinner } from '@/utils/gamesLogic/checkWinner';
 
 const winningCombinations = [
   [0, 1, 2],
@@ -26,7 +27,7 @@ export default function PlayScreen() {
 
   const gameState = useAppSelector((state) => state.game) || {
     board: Array(9).fill(null),
-    currentPlayer: 'X',
+    currentPlayer: Math.random() < 0.5 ? 'X' : 'O',
     winner: null,
     isGameOver: false,
   };
@@ -46,21 +47,6 @@ export default function PlayScreen() {
     dispatch(resetPlayers());
     dispatch(resetGame());
     router.replace('/(home)');
-  };
-
-  const checkWinner = () => {
-    for (const combo of winningCombinations) {
-      const [a, b, c] = combo;
-
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
-      }
-    }
-
-    if (board.every((cell) => cell !== null)) {
-      return 'draw';
-    }
-    return null;
   };
 
   const handleCellPress = (index: number) => {
@@ -100,7 +86,7 @@ export default function PlayScreen() {
   };
 
   useEffect(() => {
-    const result = checkWinner();
+    const result = checkWinner(board);
 
     if (result && result !== 'draw') {
       dispatch(setWinner(result));
