@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/store/store.hook';
 import { setPlayer, resetPlayers } from '@/store/slices/playerSlice';
 import { BlurView } from 'expo-blur';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
@@ -21,6 +22,7 @@ const isLargeScreen = width > 768;
 export default function PlayerSelectScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const [playerName, setPlayerName] = useState('');
 
@@ -67,14 +69,14 @@ export default function PlayerSelectScreen() {
 
         <BlurView intensity={60} tint="dark" style={styles.glassBox}>
           <Text style={[styles.title, isPlayer2Setup && { color: '#DDD6FE' }]}>
-            {isPlayer2Setup ? 'PLAYER 2 SETUP' : 'PLAYER 1 SETUP'}
+            {isPlayer2Setup ? t('player2Setup') : t('player1Setup')}
           </Text>
 
           {isPlayer2Setup && (
             <View style={styles.player1Card}>
               <FontAwesome5 name="user" size={14} color="#818CF8" style={{ marginRight: 8 }} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.player1Label}>PLAYER 1</Text>
+                <Text style={styles.player1Label}>{t('player1')}</Text>
                 <Text style={styles.player1Name}>{player1.name}</Text>
               </View>
               <View style={styles.symbolBadge}>
@@ -86,18 +88,18 @@ export default function PlayerSelectScreen() {
             </View>
           )}
 
-          <Text style={styles.label}>YOUR NAME</Text>
+          <Text style={styles.label}>{t('yourName')}</Text>
           <TextInput
             style={styles.input}
             value={playerName}
             onChangeText={setPlayerName}
-            placeholder="Enter your name"
+            placeholder={t('namePlaceholder')}
             placeholderTextColor="rgba(255,255,255,0.5)"
             autoCapitalize="words"
           />
 
           <View style={styles.symbolRow}>
-            <Text style={styles.label}>YOUR SYMBOL</Text>
+            <Text style={styles.label}>{t('yourSymbol')}</Text>
             <View
               style={[
                 styles.symbolDisplay,
@@ -114,7 +116,7 @@ export default function PlayerSelectScreen() {
             onPress={handleContinue}
             disabled={!playerName.trim()}>
             <Text style={styles.continueButtonText}>
-              {isPlayer2Setup ? 'START GAME' : 'NEXT PLAYER'}
+              {isPlayer2Setup ? t('startGame') : t('nextPlayer')}
             </Text>
           </TouchableOpacity>
         </BlurView>

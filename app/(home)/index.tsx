@@ -8,6 +8,9 @@ import { useLoadFonts } from '@/hooks/useLoadFont';
 import { MenuButton } from '@/components/menuButton';
 import { useAppDispatch } from '@/store/store.hook';
 import { setGameMode } from '@/store/slices/gameSlice';
+import { useTranslation } from '@/hooks/useTranslation';
+import { SettingsModal } from '@/components/SettingsModal';
+import { useState } from 'react';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
@@ -16,6 +19,8 @@ export default function HomeScreen() {
   const { fontsLoaded, onLayoutRootView } = useLoadFonts();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { t } = useTranslation();
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   if (!fontsLoaded) return null;
 
@@ -23,7 +28,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <LinearGradient colors={['#0F172A', '#1E293B']} style={StyleSheet.absoluteFill} />
 
-      <TouchableOpacity style={styles.settingsButton} onPress={() => {}}>
+      <TouchableOpacity style={styles.settingsButton} onPress={() => setSettingsVisible(true)}>
         <FontAwesome5 name="cog" size={20} color="#fff" />
       </TouchableOpacity>
 
@@ -33,14 +38,14 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.menuContainer}>
-          <Text style={styles.menuTitle}>SELECT MODE</Text>
+          <Text style={styles.menuTitle}>{t('selectMode')}</Text>
 
           <View style={styles.buttonContainer}>
             <MenuButton
               icon="user-friends"
               iconColor="#818CF8"
-              title="LOCAL MULTIPLAYER"
-              subtitle="Play with a friend"
+              title={t('localMultiplayer')}
+              subtitle={t('localSubtitle')}
               onPress={() => {
                 dispatch(setGameMode('solo'));
                 router.push('/(game)/player-select');
@@ -50,8 +55,8 @@ export default function HomeScreen() {
             <MenuButton
               icon="wifi"
               iconColor="#34D399"
-              title="ONLINE MULTIPLAYER"
-              subtitle="Invite or join a remote match"
+              title={t('onlineMultiplayer')}
+              subtitle={t('onlineSubtitle')}
               onPress={() => {
                 dispatch(setGameMode('multiplayer'));
                 router.push('/(online)/lobby');
@@ -61,14 +66,16 @@ export default function HomeScreen() {
             <MenuButton
               icon="robot"
               iconColor="#F472B6"
-              title="VS AI"
-              subtitle="Challenge the computer"
+              title={t('vsAI')}
+              subtitle={t('vsAISubtitle')}
             />
           </View>
         </View>
       </View>
 
       <Footer />
+
+      <SettingsModal visible={settingsVisible} onClose={() => setSettingsVisible(false)} />
     </View>
   );
 }

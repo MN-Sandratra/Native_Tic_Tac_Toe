@@ -22,6 +22,7 @@ import { LobbyService } from '@/services/lobby/lobbyService';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '@/utils/firebase/config';
 import { setPlayer } from '@/store/slices/playerSlice';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768;
@@ -32,8 +33,8 @@ export default function LobbyScreen() {
   const [roomInput, setRoomInput] = useState('');
 
   const router = useRouter();
-
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const { roomCode, players, error, createLoading, joinLoading, inLobby } = useAppSelector(
     (state) => state.lobby
@@ -60,9 +61,7 @@ export default function LobbyScreen() {
 
   const handleStartGame = async () => {
     if (!roomCode) return;
-
     const roomRef = doc(db, `rooms/${roomCode}`);
-
     await updateDoc(roomRef, { gameStarted: true });
   };
 
@@ -114,11 +113,11 @@ export default function LobbyScreen() {
 
         {!inLobby ? (
           <BlurView intensity={60} tint="dark" style={styles.glassBox}>
-            <Text style={styles.title}>Online Lobby</Text>
+            <Text style={styles.title}>{t('onlineLobby')}</Text>
             {!!error && <Text style={styles.errorText}>{error}</Text>}
             <TextInput
               style={styles.input}
-              placeholder="Your name"
+              placeholder={t('nameLobbyPlaceholder')}
               placeholderTextColor="rgba(255,255,255,0.5)"
               value={playerName}
               onChangeText={setPlayerName}
@@ -129,12 +128,12 @@ export default function LobbyScreen() {
                 onPress={handleCreateRoom}
                 loading={createLoading}
                 icon={<FontAwesome5 name="plus" size={18} color="#818CF8" style={styles.icon} />}>
-                Create
+                {t('create')}
               </LobbyButton>
-              <Text style={styles.or}>OR</Text>
+              <Text style={styles.or}>{t('or')}</Text>
               <TextInput
                 style={[styles.input, { flex: 1, minWidth: 80 }]}
-                placeholder="Room code"
+                placeholder={t('roomCodePlaceholder')}
                 placeholderTextColor="rgba(255,255,255,0.5)"
                 value={roomInput}
                 onChangeText={setRoomInput}
@@ -147,13 +146,13 @@ export default function LobbyScreen() {
                 icon={
                   <FontAwesome5 name="sign-in-alt" size={18} color="#818CF8" style={styles.icon} />
                 }>
-                Join
+                {t('join')}
               </LobbyButton>
             </View>
           </BlurView>
         ) : (
           <BlurView intensity={80} tint="dark" style={styles.lobbyGlassBox}>
-            <Text style={styles.lobbyTitle}>Room Code</Text>
+            <Text style={styles.lobbyTitle}>{t('roomCode')}</Text>
             <View style={styles.roomCodeCard}>
               <FontAwesome5 name="hashtag" size={18} color="#818CF8" style={{ marginRight: 8 }} />
               <Text style={styles.roomCode}>{roomCode}</Text>
@@ -162,12 +161,12 @@ export default function LobbyScreen() {
               </TouchableOpacity>
             </View>
             {!!copyMessage && <Text style={styles.copySuccess}>{copyMessage}</Text>}
-            <Text style={styles.lobbySubtitle}>Players in lobby</Text>
+            <Text style={styles.lobbySubtitle}>{t('playersInLobby')}</Text>
             <PlayerList players={players} />
             {players && players.length < 2 ? (
               <View style={styles.waitingBox}>
                 <ActivityIndicator size="small" color="#FCD34D" style={{ marginBottom: 6 }} />
-                <Text style={styles.waiting}>Waiting for another player...</Text>
+                <Text style={styles.waiting}>{t('waiting')}</Text>
               </View>
             ) : (
               <LobbyButton
@@ -175,7 +174,7 @@ export default function LobbyScreen() {
                 loading={false}
                 icon={<FontAwesome5 name="play" size={18} color="#fff" style={styles.icon} />}
                 style={styles.startButton}>
-                Start Game
+                {t('startGameBtn')}
               </LobbyButton>
             )}
           </BlurView>
@@ -361,12 +360,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 1 },
-  },
-  startButtonText: {
-    color: '#fff',
-    fontFamily: 'SpaceGrotesk-Bold',
-    fontSize: 15,
-    marginLeft: 8,
   },
   icon: {
     marginRight: 2,

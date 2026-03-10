@@ -4,12 +4,14 @@ import { middleware } from '@/store/store.middleware';
 import playerSlice from './slices/playerSlice';
 import gameSlice from './slices/gameSlice';
 import lobbySlice from './slices/lobbySlice';
+import settingsSlice from './slices/settingsSlice';
 
 export const store = configureStore({
   reducer: {
     players: playerSlice,
     game: gameSlice,
     lobby: lobbySlice,
+    settings: settingsSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
