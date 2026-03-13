@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { FontAwesome5 } from '@expo/vector-icons';
+import Svg, { Rect, Path, G, ClipPath, Defs } from 'react-native-svg';
 import { useAppDispatch } from '@/store/store.hook';
 import { setLanguage } from '@/store/slices/settingsSlice';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -12,9 +13,46 @@ interface SettingsModalProps {
   onClose: () => void;
 }
 
-const LANGUAGES: { code: Lang; flag: string; label: string }[] = [
-  { code: 'en', flag: '🇬🇧', label: 'English' },
-  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+const FrenchFlag = () => (
+  <Svg viewBox="0 0 3 2" width={36} height={24} style={flagStyles.flag}>
+    <Rect width="1" height="2" fill="#002395" />
+    <Rect x="1" width="1" height="2" fill="#EDEDED" />
+    <Rect x="2" width="1" height="2" fill="#ED2939" />
+  </Svg>
+);
+
+// Simplified but accurate Union Jack
+const UKFlag = () => (
+  <Svg viewBox="0 0 60 30" width={36} height={18} style={flagStyles.flag}>
+    <Defs>
+      <ClipPath id="clip">
+        <Rect width="60" height="30" rx="2" />
+      </ClipPath>
+    </Defs>
+    <G clipPath="url(#clip)">
+      {/* Background */}
+      <Rect width="60" height="30" fill="#012169" />
+      {/* St Andrew's cross — white diagonals */}
+      <Path d="M0,0 L60,30" stroke="#fff" strokeWidth="6" />
+      <Path d="M60,0 L0,30" stroke="#fff" strokeWidth="6" />
+      {/* St Patrick's cross — red diagonals (offset, upper/lower quarters) */}
+      <Path d="M0,0 L30,15" stroke="#C8102E" strokeWidth="4" />
+      <Path d="M60,0 L30,15" stroke="#C8102E" strokeWidth="4" />
+      <Path d="M0,30 L30,15" stroke="#C8102E" strokeWidth="4" />
+      <Path d="M60,30 L30,15" stroke="#C8102E" strokeWidth="4" />
+      {/* St George's cross — white */}
+      <Rect x="25" width="10" height="30" fill="#fff" />
+      <Rect y="10" width="60" height="10" fill="#fff" />
+      {/* St George's cross — red */}
+      <Rect x="27" width="6" height="30" fill="#C8102E" />
+      <Rect y="12" width="60" height="6" fill="#C8102E" />
+    </G>
+  </Svg>
+);
+
+const LANGUAGES: { code: Lang; Flag: React.ComponentType; label: string }[] = [
+  { code: 'en', Flag: UKFlag, label: 'English' },
+  { code: 'fr', Flag: FrenchFlag, label: 'Français' },
 ];
 
 export function SettingsModal({ visible, onClose }: SettingsModalProps) {
@@ -40,21 +78,21 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
 
             <Text style={styles.sectionLabel}>{t('language')}</Text>
             <View style={styles.langRow}>
-              {LANGUAGES.map(({ code, flag, label }) => (
+              {LANGUAGES.map(({ code, Flag, label }) => (
                 <TouchableOpacity
                   key={code}
                   style={[styles.langBtn, language === code && styles.langBtnActive]}
                   onPress={() => handleSelect(code)}>
-                  <Text style={styles.flag}>{flag}</Text>
+                  <Flag />
                   <Text style={[styles.langLabel, language === code && styles.langLabelActive]}>
                     {label}
                   </Text>
                   {language === code && (
                     <FontAwesome5
                       name="check"
-                      size={12}
+                      size={11}
                       color="#818CF8"
-                      style={{ marginLeft: 4 }}
+                      style={{ marginLeft: 2 }}
                     />
                   )}
                 </TouchableOpacity>
@@ -66,6 +104,13 @@ export function SettingsModal({ visible, onClose }: SettingsModalProps) {
     </Modal>
   );
 }
+
+const flagStyles = StyleSheet.create({
+  flag: {
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+});
 
 const styles = StyleSheet.create({
   overlay: {
@@ -134,19 +179,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1.5,
     borderColor: 'transparent',
-    gap: 6,
+    gap: 8,
   },
   langBtnActive: {
     borderColor: '#818CF8',
     backgroundColor: 'rgba(129,140,248,0.12)',
   },
-  flag: {
-    fontSize: 20,
-  },
   langLabel: {
     fontFamily: 'SpaceGrotesk-Bold',
     fontSize: 14,
-    color: 'rgba(255,255,255,0.6)',
+    color: 'rgba(255,255,255,0.5)',
   },
   langLabelActive: {
     color: '#fff',
