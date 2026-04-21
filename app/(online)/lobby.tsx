@@ -111,7 +111,6 @@ export default function LobbyScreen() {
           <Text style={[styles.symbol, styles.symbolX]}>X</Text>
           <Text style={[styles.symbol, styles.symbolO]}>O</Text>
         </View>
-        {inLobby}
 
         {!inLobby ? (
           <BlurView intensity={60} tint="dark" style={styles.glassBox}>

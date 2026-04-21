@@ -1,4 +1,12 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Platform,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useState } from 'react';
@@ -30,7 +38,6 @@ export default function PlayerSelectScreen() {
           symbol: currentSymbol,
         })
       );
-
       if (isPlayer2Setup) {
         router.push('/(game)/play');
       } else {
@@ -44,11 +51,6 @@ export default function PlayerSelectScreen() {
     setPlayerName('');
   };
 
-  // Defined players colors
-  const gradientColors = isPlayer2Setup
-    ? ['#4A1D96', '#7C3AED'] // purple: player 2
-    : ['#0F172A', '#1E293B']; // Blue: player 1
-
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#0F172A', '#1E293B']} style={StyleSheet.absoluteFill} />
@@ -58,68 +60,71 @@ export default function PlayerSelectScreen() {
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={[styles.title, { color: isPlayer2Setup ? '#DDD6FE' : '#ffffff' }]}>
-          {isPlayer2Setup ? 'PLAYER 2 SETUP' : 'PLAYER 1 SETUP'}
-        </Text>
+        <View style={styles.logoBox}>
+          <Text style={[styles.symbol, styles.symbolX]}>X</Text>
+          <Text style={[styles.symbol, styles.symbolO]}>O</Text>
+        </View>
 
-        {isPlayer2Setup && (
-          <View style={styles.player1Info}>
+        <BlurView intensity={60} tint="dark" style={styles.glassBox}>
+          <Text style={[styles.title, isPlayer2Setup && { color: '#DDD6FE' }]}>
+            {isPlayer2Setup ? 'PLAYER 2 SETUP' : 'PLAYER 1 SETUP'}
+          </Text>
+
+          {isPlayer2Setup && (
             <View style={styles.player1Card}>
-              <Text style={styles.player1Label}>PLAYER 1</Text>
-              <Text style={styles.player1Name}>{player1.name}</Text>
+              <FontAwesome5 name="user" size={14} color="#818CF8" style={{ marginRight: 8 }} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.player1Label}>PLAYER 1</Text>
+                <Text style={styles.player1Name}>{player1.name}</Text>
+              </View>
               <View style={styles.symbolBadge}>
                 <Text style={styles.symbolBadgeText}>{player1.symbol}</Text>
               </View>
               <TouchableOpacity style={styles.deleteButton} onPress={handleResetPlayer1}>
-                <FontAwesome5 name="trash" size={16} color="#FF4B4B" />
+                <FontAwesome5 name="trash" size={14} color="#FF4B4B" />
               </TouchableOpacity>
             </View>
-          </View>
-        )}
+          )}
 
-        <View style={styles.inputContainer}>
           <Text style={styles.label}>YOUR NAME</Text>
-          <BlurView intensity={20} tint="dark" style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              value={playerName}
-              onChangeText={setPlayerName}
-              placeholder="Enter your name"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            />
-          </BlurView>
-        </View>
+          <TextInput
+            style={styles.input}
+            value={playerName}
+            onChangeText={setPlayerName}
+            placeholder="Enter your name"
+            placeholderTextColor="rgba(255,255,255,0.5)"
+            autoCapitalize="words"
+          />
 
-        <View style={styles.symbolContainer}>
-          <Text style={styles.label}>YOUR SYMBOL</Text>
-          <View
-            style={[
-              styles.symbolDisplay,
-              isPlayer2Setup && { backgroundColor: 'rgba(124, 58, 237, 0.1)' },
-            ]}>
-            <Text style={[styles.symbolText, isPlayer2Setup && { color: '#7C3AED' }]}>
-              {currentSymbol}
-            </Text>
+          <View style={styles.symbolRow}>
+            <Text style={styles.label}>YOUR SYMBOL</Text>
+            <View
+              style={[
+                styles.symbolDisplay,
+                isPlayer2Setup && { backgroundColor: 'rgba(124,58,237,0.1)' },
+              ]}>
+              <Text style={[styles.symbolText, isPlayer2Setup && { color: '#7C3AED' }]}>
+                {currentSymbol}
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <TouchableOpacity
-          style={[styles.continueButton, !playerName.trim() && styles.disabledButton]}
-          onPress={handleContinue}
-          disabled={!playerName.trim()}>
-          <Text style={styles.continueButtonText}>
-            {isPlayer2Setup ? 'START GAME' : 'NEXT PLAYER'}
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.continueButton, !playerName.trim() && styles.disabledButton]}
+            onPress={handleContinue}
+            disabled={!playerName.trim()}>
+            <Text style={styles.continueButtonText}>
+              {isPlayer2Setup ? 'START GAME' : 'NEXT PLAYER'}
+            </Text>
+          </TouchableOpacity>
+        </BlurView>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   backButton: {
     position: 'absolute',
     top: 40,
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
@@ -136,114 +141,134 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 12,
+  },
+  logoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18,
+    marginTop: isLargeScreen ? 40 : 20,
+  },
+  symbol: {
+    fontFamily: 'PressStart2P',
+    fontSize: isLargeScreen ? 32 : 24,
+    marginHorizontal: 4,
+  },
+  symbolX: { color: '#818CF8' },
+  symbolO: { color: '#F472B6' },
+  glassBox: {
+    width: '100%',
+    maxWidth: 420,
+    borderRadius: 20,
     padding: 20,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 6 },
+      },
+      android: { elevation: 6 },
+    }),
   },
   title: {
     fontFamily: 'ChakraPetch-Bold',
-    fontSize: isLargeScreen ? 32 : 28,
+    fontSize: isLargeScreen ? 22 : 18,
     color: '#fff',
-    marginBottom: 40,
+    marginBottom: 16,
     letterSpacing: 2,
   },
-  player1Info: {
-    marginBottom: 30,
-    width: '100%',
-    maxWidth: 400,
-  },
   player1Card: {
-    position: 'relative',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 15,
-    padding: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(129,140,248,0.10)',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 16,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(129,140,248,0.3)',
   },
   player1Label: {
     fontFamily: 'ChakraPetch-SemiBold',
-    fontSize: 16,
-    color: '#fff',
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.6)',
   },
   player1Name: {
     fontFamily: 'SpaceGrotesk-Bold',
-    fontSize: 20,
+    fontSize: 15,
     color: '#fff',
-    marginVertical: 10,
   },
   symbolBadge: {
-    backgroundColor: 'rgba(129, 140, 248, 0.2)',
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: 'rgba(129,140,248,0.2)',
+    borderRadius: 8,
+    padding: 6,
+    marginRight: 8,
   },
   symbolBadgeText: {
     fontFamily: 'PressStart2P',
-    fontSize: 24,
+    fontSize: 14,
     color: '#818CF8',
   },
-  inputContainer: {
-    width: '100%',
-    maxWidth: 400,
-    marginBottom: 30,
+  deleteButton: {
+    padding: 6,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,75,75,0.1)',
   },
   label: {
     fontFamily: 'ChakraPetch-SemiBold',
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 10,
-  },
-  inputWrapper: {
-    borderRadius: 10,
-    overflow: 'hidden',
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+    alignSelf: 'flex-start',
+    marginBottom: 6,
+    letterSpacing: 1,
   },
   input: {
-    width: '100%',
-    height: 50,
-    paddingHorizontal: 15,
+    backgroundColor: 'rgba(255,255,255,0.10)',
     color: '#fff',
+    borderRadius: 10,
+    padding: 12,
     fontFamily: 'SpaceGrotesk-Medium',
-    fontSize: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  symbolContainer: {
+    fontSize: 15,
     width: '100%',
-    maxWidth: 400,
-    marginBottom: 40,
+    marginBottom: 14,
+  },
+  symbolRow: {
+    width: '100%',
     alignItems: 'center',
+    marginBottom: 16,
   },
   symbolDisplay: {
-    width: 80,
-    height: 80,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 4,
   },
   symbolText: {
     fontFamily: 'PressStart2P',
-    fontSize: 32,
+    fontSize: 26,
     color: '#818CF8',
   },
   continueButton: {
     width: '100%',
-    maxWidth: 400,
-    height: 50,
+    height: 46,
     backgroundColor: '#818CF8',
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   disabledButton: {
-    backgroundColor: 'rgba(129, 140, 248, 0.5)',
+    backgroundColor: 'rgba(129,140,248,0.4)',
   },
   continueButtonText: {
     fontFamily: 'SpaceGrotesk-Bold',
-    fontSize: 16,
+    fontSize: 15,
     color: '#fff',
-  },
-  deleteButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 75, 75, 0.1)',
+    letterSpacing: 1,
   },
 });
