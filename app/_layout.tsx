@@ -3,16 +3,24 @@ import StoreProvider from '@/store/store.provider';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { initAnonymousAuth } from '@/utils/firebase/config';
+import { useAppDispatch } from '@/store/store.hook';
+import { loadLanguage } from '@/store/slices/settingsSlice';
 
-export default function RootLayout() {
+function AppInit() {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    initAnonymousAuth().catch((err) => {
-      console.error('Auth error:', err);
-    });
+    initAnonymousAuth().catch((err) => console.error('Auth error:', err));
+    dispatch(loadLanguage());
   }, []);
 
+  return null;
+}
+
+export default function RootLayout() {
   return (
     <StoreProvider>
+      <AppInit />
       <StatusBar style="light" />
       <Stack
         screenOptions={{

@@ -9,16 +9,17 @@ import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 import { firebaseGame } from '@/adapter/firebaseGame';
 import { checkWinner } from '@/utils/gamesLogic/checkWinner';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const winningCombinations = [
   [0, 1, 2],
   [3, 4, 5],
-  [6, 7, 8], // Lignes
+  [6, 7, 8], // Rows
   [0, 3, 6],
   [1, 4, 7],
-  [2, 5, 8], // Colonnes
+  [2, 5, 8], // Columns
   [0, 4, 8],
-  [2, 4, 6], // Diagonales
+  [2, 4, 6], // Diagonal
 ];
 
 export default function PlayScreen() {
@@ -37,6 +38,7 @@ export default function PlayScreen() {
 
   const { board, currentPlayer, winner, isGameOver, gameMode } = gameState;
 
+  const { t } = useTranslation();
   const [showExitDialog, setShowExitDialog] = useState(false);
 
   const handleBack = () => {
@@ -74,15 +76,12 @@ export default function PlayScreen() {
 
   const getGameStatus = () => {
     if (isGameOver) {
-      if (winner === 'draw') {
-        return "It's a Draw!";
-      }
-
+      if (winner === 'draw') return t('draw');
       const winningPlayer = winner === player1?.symbol ? player1?.name : player2?.name;
-      return `${winningPlayer} Wins!`;
+      return t('wins', { name: winningPlayer ?? '' });
     }
     const currentPlayerName = currentPlayer === player1?.symbol ? player1?.name : player2?.name;
-    return `${currentPlayerName}'s Turn`;
+    return t('turn', { name: currentPlayerName ?? '' });
   };
 
   useEffect(() => {
@@ -195,9 +194,7 @@ export default function PlayScreen() {
         <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                {winner === 'draw' ? "It's a Draw!" : 'Victory!'}
-              </Text>
+              <Text style={styles.modalTitle}>{winner === 'draw' ? t('draw') : t('victory')}</Text>
 
               {winner !== 'draw' && (
                 <View style={styles.winnerInfo}>
@@ -229,7 +226,7 @@ export default function PlayScreen() {
                   style={[styles.modalButton, styles.restartButton]}
                   onPress={handleRestart}>
                   <FontAwesome5 name="redo" size={20} color="#fff" style={styles.buttonIcon} />
-                  <Text style={styles.buttonText}>PLAY AGAIN</Text>
+                  <Text style={styles.buttonText}>{t('playAgain')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -240,7 +237,7 @@ export default function PlayScreen() {
                     router.replace('/(home)');
                   }}>
                   <FontAwesome5 name="home" size={20} color="#fff" style={styles.buttonIcon} />
-                  <Text style={styles.buttonText}>MENU</Text>
+                  <Text style={styles.buttonText}>{t('menu')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -251,20 +248,18 @@ export default function PlayScreen() {
       {showExitDialog && (
         <View style={styles.dialogOverlay}>
           <View style={styles.dialog}>
-            <Text style={styles.dialogTitle}>Quitter la partie ?</Text>
-            <Text style={styles.dialogText}>
-              Voulez-vous vraiment quitter ? La partie sera perdue.
-            </Text>
+            <Text style={styles.dialogTitle}>{t('exitTitle')}</Text>
+            <Text style={styles.dialogText}>{t('exitBody')}</Text>
             <View style={styles.dialogButtons}>
               <TouchableOpacity
                 style={[styles.dialogButton, styles.cancelButton]}
                 onPress={() => setShowExitDialog(false)}>
-                <Text style={styles.dialogButtonText}>Annuler</Text>
+                <Text style={styles.dialogButtonText}>{t('cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.dialogButton, styles.confirmButton]}
                 onPress={handleExitConfirm}>
-                <Text style={styles.dialogButtonText}>Quitter</Text>
+                <Text style={styles.dialogButtonText}>{t('quit')}</Text>
               </TouchableOpacity>
             </View>
           </View>
