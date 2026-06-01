@@ -8,6 +8,15 @@ type Translations = {
   onlineSubtitle: string;
   vsAI: string;
   vsAISubtitle: string;
+  chooseYourSymbol: string;
+  chooseDifficulty: string;
+  easy: string;
+  easyDesc: string;
+  medium: string;
+  mediumDesc: string;
+  hard: string;
+  hardDesc: string;
+  playVsAI: string;
   player1Setup: string;
   player2Setup: string;
   player1: string;
@@ -50,6 +59,15 @@ export const translations: Record<Lang, Translations> = {
     onlineSubtitle: 'Invite or join a remote match',
     vsAI: 'VS AI',
     vsAISubtitle: 'Challenge the computer',
+    chooseYourSymbol: 'Choose your symbol',
+    chooseDifficulty: 'Choose difficulty',
+    easy: 'Easy',
+    easyDesc: 'Random moves — perfect for beginners',
+    medium: 'Medium',
+    mediumDesc: 'Mixed strategy — a real challenge',
+    hard: 'Hard',
+    hardDesc: 'Unbeatable — good luck!',
+    playVsAI: 'Play vs AI',
     player1Setup: 'Player 1 setup',
     player2Setup: 'Player 2 setup',
     player1: 'Player 1',
@@ -90,6 +108,15 @@ export const translations: Record<Lang, Translations> = {
     onlineSubtitle: 'Inviter ou rejoindre une partie',
     vsAI: 'VS IA',
     vsAISubtitle: "Affronter l'ordinateur",
+    chooseYourSymbol: 'Choisissez votre symbole',
+    chooseDifficulty: 'Choisissez la difficulté',
+    easy: 'Facile',
+    easyDesc: 'Coups aléatoires — parfait pour débuter',
+    medium: 'Moyen',
+    mediumDesc: 'Stratégie mixte — un vrai défi',
+    hard: 'Difficile',
+    hardDesc: 'Imbattable — bonne chance !',
+    playVsAI: 'Jouer vs IA',
     player1Setup: 'Configuration joueur 1',
     player2Setup: 'Configuration joueur 2',
     player1: 'Joueur 1',

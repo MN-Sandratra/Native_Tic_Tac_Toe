@@ -68,6 +68,7 @@ export default function HomeScreen() {
               iconColor="#F472B6"
               title={t('vsAI')}
               subtitle={t('vsAISubtitle')}
+              onPress={() => router.push('/(game)/ai-select')}
             />
           </View>
         </View>
