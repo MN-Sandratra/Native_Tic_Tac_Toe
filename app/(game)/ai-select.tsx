@@ -1,4 +1,12 @@
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Platform,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useState } from 'react';
@@ -6,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { useAppDispatch } from '@/store/store.hook';
 import { setGameMode, setDifficulty, setAiSymbol } from '@/store/slices/gameSlice';
+import { setPlayer, resetPlayers } from '@/store/slices/playerSlice';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { Difficulty } from '@/store/slices/gameSlice';
 
@@ -23,12 +32,19 @@ export default function AISelectScreen() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
+  const [playerName, setPlayerName] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState<'X' | 'O'>('X');
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
 
+  const aiSymbol: 'X' | 'O' = selectedSymbol === 'X' ? 'O' : 'X';
+
   const handleStart = () => {
+    if (!playerName.trim()) return;
+    dispatch(resetPlayers());
+    dispatch(setPlayer({ playerNumber: 1, name: playerName.trim(), symbol: selectedSymbol }));
+    dispatch(setPlayer({ playerNumber: 2, name: 'IA', symbol: aiSymbol }));
     dispatch(setGameMode('ai'));
-    dispatch(setAiSymbol(selectedSymbol === 'X' ? 'O' : 'X'));
+    dispatch(setAiSymbol(aiSymbol));
     dispatch(setDifficulty(selectedDifficulty));
     router.push('/(game)/play');
   };
@@ -54,7 +70,17 @@ export default function AISelectScreen() {
         </View>
 
         <BlurView intensity={60} tint="dark" style={styles.glassBox}>
-          <Text style={styles.sectionLabel}>{t('chooseYourSymbol')}</Text>
+          <Text style={styles.sectionLabel}>{t('yourName')}</Text>
+          <TextInput
+            style={styles.input}
+            value={playerName}
+            onChangeText={setPlayerName}
+            placeholder={t('namePlaceholder')}
+            placeholderTextColor="rgba(255,255,255,0.4)"
+            autoCapitalize="words"
+          />
+
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>{t('chooseYourSymbol')}</Text>
           <View style={styles.symbolRow}>
             {(['X', 'O'] as const).map((sym) => (
               <TouchableOpacity
@@ -114,9 +140,18 @@ export default function AISelectScreen() {
             ))}
           </View>
 
-          <TouchableOpacity style={styles.startButton} onPress={handleStart}>
-            <FontAwesome5 name="robot" size={16} color="#fff" style={{ marginRight: 8 }} />
-            <Text style={styles.startButtonText}>{t('playVsAI')}</Text>
+          <TouchableOpacity
+            style={[styles.startButton, !playerName.trim() && styles.startButtonDisabled]}
+            onPress={handleStart}
+            disabled={!playerName.trim()}>
+            <LinearGradient
+              colors={['#6366F1', '#8B5CF6']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.startButtonGradient}>
+              <FontAwesome5 name="robot" size={16} color="#fff" style={{ marginRight: 8 }} />
+              <Text style={styles.startButtonText}>{t('playVsAI')}</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </BlurView>
       </View>
@@ -234,11 +269,26 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: 'rgba(255,255,255,0.5)',
   },
+  input: {
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    color: '#fff',
+    borderRadius: 10,
+    padding: 12,
+    fontFamily: 'SpaceGrotesk-Medium',
+    fontSize: 15,
+    width: '100%',
+    marginBottom: 4,
+  },
   startButton: {
     marginTop: 20,
-    height: 48,
-    backgroundColor: '#F472B6',
     borderRadius: 12,
+    overflow: 'hidden',
+  },
+  startButtonDisabled: {
+    opacity: 0.4,
+  },
+  startButtonGradient: {
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -4,6 +4,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/store/store.hook';
 import { makeMove, resetGame, setWinner, syncWithOnlineGame } from '@/store/slices/gameSlice';
+import { getAIMove } from '@/utils/gamesLogic/aiPlayer';
 import { resetPlayers } from '@/store/slices/playerSlice';
 import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
@@ -36,7 +37,7 @@ export default function PlayScreen() {
   const localPlayer = useAppSelector((state) => state.lobby.localPlayer);
   const { roomCode } = useAppSelector((state) => state.lobby);
 
-  const { board, currentPlayer, winner, isGameOver, gameMode } = gameState;
+  const { board, currentPlayer, winner, isGameOver, gameMode, aiSymbol, difficulty } = gameState;
 
   const { t } = useTranslation();
   const [showExitDialog, setShowExitDialog] = useState(false);
@@ -51,8 +52,10 @@ export default function PlayScreen() {
     router.replace('/(home)');
   };
 
+  const isAITurn = gameMode === 'ai' && currentPlayer === aiSymbol;
+
   const handleCellPress = (index: number) => {
-    if (board[index] || winner || isGameOver) return;
+    if (board[index] || winner || isGameOver || isAITurn) return;
 
     const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
 
@@ -95,10 +98,22 @@ export default function PlayScreen() {
   }, [board]);
 
   useEffect(() => {
+    if (gameMode === 'ai') return;
     if (!player1 || !player2) {
       router.replace('/(game)/player-select');
     }
-  }, [player1, player2]);
+  }, [player1, player2, gameMode]);
+
+  useEffect(() => {
+    if (gameMode !== 'ai' || isGameOver || !aiSymbol || currentPlayer !== aiSymbol) return;
+
+    const timeout = setTimeout(() => {
+      const move = getAIMove(board, aiSymbol, difficulty);
+      if (move !== -1) dispatch(makeMove(move));
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [board, currentPlayer, isGameOver, gameMode]);
 
   useEffect(() => {
     if (gameState.gameMode !== 'multiplayer') return;
