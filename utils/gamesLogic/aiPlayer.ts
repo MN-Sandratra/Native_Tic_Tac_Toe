@@ -12,11 +12,13 @@ function randomMove(board: Player[]): number {
 }
 
 export function getAIMove(board: Player[], aiSymbol: 'X' | 'O', difficulty: Difficulty): number {
-  if (difficulty === 'easy') return randomMove(board);
+  const mutable = [...board];
+
+  if (difficulty === 'easy') return randomMove(mutable);
 
   if (difficulty === 'medium') {
-    return Math.random() < 0.5 ? randomMove(board) : getBestMove(board, aiSymbol);
+    return Math.random() < 0.5 ? randomMove(mutable) : getBestMove(mutable, aiSymbol);
   }
 
-  return getBestMove(board, aiSymbol);
+  return getBestMove(mutable, aiSymbol);
 }
