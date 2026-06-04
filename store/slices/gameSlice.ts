@@ -2,13 +2,17 @@ import { checkWinner } from '@/utils/gamesLogic/checkWinner';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type Player = 'X' | 'O' | 'draw' | null;
+type Difficulty = 'easy' | 'medium' | 'hard';
+type GameMode = 'solo' | 'multiplayer' | 'ai';
 
 interface GameState {
   board: Player[];
   currentPlayer: Player;
   winner: Player;
-  gameMode: 'solo' | 'multiplayer';
+  gameMode: GameMode;
   isGameOver: boolean;
+  difficulty: Difficulty;
+  aiSymbol: 'X' | 'O' | null;
 }
 
 const initialState: GameState = {
@@ -17,6 +21,8 @@ const initialState: GameState = {
   winner: null,
   gameMode: 'multiplayer',
   isGameOver: false,
+  difficulty: 'medium',
+  aiSymbol: null,
 };
 
 const gameSlice = createSlice({
@@ -39,8 +45,16 @@ const gameSlice = createSlice({
       }
     },
 
-    setGameMode: (state, action: PayloadAction<'solo' | 'multiplayer'>) => {
+    setGameMode: (state, action: PayloadAction<GameMode>) => {
       state.gameMode = action.payload;
+    },
+
+    setDifficulty: (state, action: PayloadAction<Difficulty>) => {
+      state.difficulty = action.payload;
+    },
+
+    setAiSymbol: (state, action: PayloadAction<'X' | 'O'>) => {
+      state.aiSymbol = action.payload;
     },
 
     resetGame: (state) => {
@@ -61,7 +75,14 @@ const gameSlice = createSlice({
   },
 });
 
-export const { makeMove, setGameMode, resetGame, setWinner, syncWithOnlineGame } =
-  gameSlice.actions;
-export type { GameState };
+export const {
+  makeMove,
+  setGameMode,
+  resetGame,
+  setWinner,
+  syncWithOnlineGame,
+  setDifficulty,
+  setAiSymbol,
+} = gameSlice.actions;
+export type { GameState, Difficulty, GameMode };
 export default gameSlice.reducer;
