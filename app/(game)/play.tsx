@@ -3,13 +3,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/store/store.hook';
-import { makeMove, resetGame, setWinner, syncWithOnlineGame } from '@/store/slices/gameSlice';
+import { makeMove, resetGame, syncWithOnlineGame } from '@/store/slices/gameSlice';
 import { getAIMove } from '@/utils/gamesLogic/aiPlayer';
 import { resetPlayers } from '@/store/slices/playerSlice';
 import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 import { firebaseGame } from '@/adapter/firebaseGame';
-import { checkWinner } from '@/utils/gamesLogic/checkWinner';
 import { useTranslation } from '@/hooks/useTranslation';
 
 const winningCombinations = [
@@ -86,16 +85,6 @@ export default function PlayScreen() {
     const currentPlayerName = currentPlayer === player1?.symbol ? player1?.name : player2?.name;
     return t('turn', { name: currentPlayerName ?? '' });
   };
-
-  useEffect(() => {
-    const result = checkWinner(board);
-
-    if (result && result !== 'draw') {
-      dispatch(setWinner(result));
-    } else if (result === 'draw') {
-      dispatch(setWinner('draw'));
-    }
-  }, [board]);
 
   useEffect(() => {
     if (gameMode === 'ai') return;
