@@ -102,7 +102,7 @@ export default function PlayScreen() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [board, currentPlayer, isGameOver, gameMode]);
+  }, [board, currentPlayer, isGameOver, gameMode, aiSymbol, difficulty]);
 
   useEffect(() => {
     if (gameState.gameMode !== 'multiplayer') return;
