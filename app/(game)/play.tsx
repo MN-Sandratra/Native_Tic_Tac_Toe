@@ -11,27 +11,11 @@ import { BlurView } from 'expo-blur';
 import { firebaseGame } from '@/adapter/firebaseGame';
 import { useTranslation } from '@/hooks/useTranslation';
 
-const winningCombinations = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8], // Rows
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8], // Columns
-  [0, 4, 8],
-  [2, 4, 6], // Diagonal
-];
-
 export default function PlayScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const gameState = useAppSelector((state) => state.game) || {
-    board: Array(9).fill(null),
-    currentPlayer: Math.random() < 0.5 ? 'X' : 'O',
-    winner: null,
-    isGameOver: false,
-  };
+  const gameState = useAppSelector((state) => state.game);
   const { player1, player2 } = useAppSelector((state) => state.players);
   const localPlayer = useAppSelector((state) => state.lobby.localPlayer);
   const { roomCode } = useAppSelector((state) => state.lobby);
