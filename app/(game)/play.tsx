@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -40,9 +40,8 @@ export default function PlayScreen() {
   const handleCellPress = (index: number) => {
     if (board[index] || winner || isGameOver || isAITurn) return;
 
-    const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
-
     if (gameMode === 'multiplayer') {
+      const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
       if (gameState.currentPlayer !== currentPlayerSymbol) return;
 
       const newGameState = { ...gameState };
@@ -66,6 +65,7 @@ export default function PlayScreen() {
       const winningPlayer = winner === player1?.symbol ? player1?.name : player2?.name;
       return t('wins', { name: winningPlayer ?? '' });
     }
+    if (isAITurn) return t('aiThinking');
     const currentPlayerName = currentPlayer === player1?.symbol ? player1?.name : player2?.name;
     return t('turn', { name: currentPlayerName ?? '' });
   };
@@ -117,7 +117,11 @@ export default function PlayScreen() {
               ]}>
               <Text style={styles.playerName}>{player1?.name}</Text>
               <View style={[styles.symbolBadge, { backgroundColor: 'rgba(129, 140, 248, 0.2)' }]}>
-                <Text style={[styles.symbolText, { color: '#818CF8' }]}>X</Text>
+                {isAITurn && player1?.symbol === 'X' ? (
+                  <ActivityIndicator size="small" color="#818CF8" />
+                ) : (
+                  <Text style={[styles.symbolText, { color: '#818CF8' }]}>X</Text>
+                )}
               </View>
             </View>
 
@@ -132,7 +136,11 @@ export default function PlayScreen() {
               ]}>
               <Text style={styles.playerName}>{player2?.name}</Text>
               <View style={[styles.symbolBadge, { backgroundColor: 'rgba(244, 114, 182, 0.2)' }]}>
-                <Text style={[styles.symbolText, { color: '#F472B6' }]}>O</Text>
+                {isAITurn && player2?.symbol === 'O' ? (
+                  <ActivityIndicator size="small" color="#F472B6" />
+                ) : (
+                  <Text style={[styles.symbolText, { color: '#F472B6' }]}>O</Text>
+                )}
               </View>
             </View>
           </View>

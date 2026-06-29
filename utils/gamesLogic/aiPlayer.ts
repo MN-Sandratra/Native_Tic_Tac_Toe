@@ -17,7 +17,7 @@ export function getAIMove(board: Player[], aiSymbol: 'X' | 'O', difficulty: Diff
   if (difficulty === 'easy') return randomMove(mutable);
 
   if (difficulty === 'medium') {
-    return Math.random() < 0.5 ? randomMove(mutable) : getBestMove(mutable, aiSymbol);
+    return Math.random() < 0.75 ? randomMove(mutable) : getBestMove(mutable, aiSymbol);
   }
 
   return getBestMove(mutable, aiSymbol);
