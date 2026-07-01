@@ -17,6 +17,7 @@ type Translations = {
   hard: string;
   hardDesc: string;
   playVsAI: string;
+  aiThinking: string;
   player1Setup: string;
   player2Setup: string;
   player1: string;
@@ -68,6 +69,7 @@ export const translations: Record<Lang, Translations> = {
     hard: 'Hard',
     hardDesc: 'Unbeatable — good luck!',
     playVsAI: 'Play vs AI',
+    aiThinking: 'AI is thinking...',
     player1Setup: 'Player 1 setup',
     player2Setup: 'Player 2 setup',
     player1: 'Player 1',
@@ -117,6 +119,7 @@ export const translations: Record<Lang, Translations> = {
     hard: 'Difficile',
     hardDesc: 'Imbattable — bonne chance !',
     playVsAI: 'Jouer vs IA',
+    aiThinking: "L'IA réfléchit...",
     player1Setup: 'Configuration joueur 1',
     player2Setup: 'Configuration joueur 2',
     player1: 'Joueur 1',

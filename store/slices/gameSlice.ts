@@ -1,7 +1,6 @@
 import { checkWinner } from '@/utils/gamesLogic/checkWinner';
+import type { Player } from '@/utils/gamesLogic/checkWinner';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-type Player = 'X' | 'O' | 'draw' | null;
 type Difficulty = 'easy' | 'medium' | 'hard';
 type GameMode = 'solo' | 'multiplayer' | 'ai';
 

@@ -1,38 +1,21 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/store/store.hook';
-import { makeMove, resetGame, setWinner, syncWithOnlineGame } from '@/store/slices/gameSlice';
+import { makeMove, resetGame, syncWithOnlineGame } from '@/store/slices/gameSlice';
 import { getAIMove } from '@/utils/gamesLogic/aiPlayer';
 import { resetPlayers } from '@/store/slices/playerSlice';
 import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 import { firebaseGame } from '@/adapter/firebaseGame';
-import { checkWinner } from '@/utils/gamesLogic/checkWinner';
 import { useTranslation } from '@/hooks/useTranslation';
-
-const winningCombinations = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8], // Rows
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8], // Columns
-  [0, 4, 8],
-  [2, 4, 6], // Diagonal
-];
 
 export default function PlayScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const gameState = useAppSelector((state) => state.game) || {
-    board: Array(9).fill(null),
-    currentPlayer: Math.random() < 0.5 ? 'X' : 'O',
-    winner: null,
-    isGameOver: false,
-  };
+  const gameState = useAppSelector((state) => state.game);
   const { player1, player2 } = useAppSelector((state) => state.players);
   const localPlayer = useAppSelector((state) => state.lobby.localPlayer);
   const { roomCode } = useAppSelector((state) => state.lobby);
@@ -57,9 +40,8 @@ export default function PlayScreen() {
   const handleCellPress = (index: number) => {
     if (board[index] || winner || isGameOver || isAITurn) return;
 
-    const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
-
     if (gameMode === 'multiplayer') {
+      const currentPlayerSymbol = player1?.name === localPlayer ? player1.symbol : player2?.symbol;
       if (gameState.currentPlayer !== currentPlayerSymbol) return;
 
       const newGameState = { ...gameState };
@@ -83,19 +65,10 @@ export default function PlayScreen() {
       const winningPlayer = winner === player1?.symbol ? player1?.name : player2?.name;
       return t('wins', { name: winningPlayer ?? '' });
     }
+    if (isAITurn) return t('aiThinking');
     const currentPlayerName = currentPlayer === player1?.symbol ? player1?.name : player2?.name;
     return t('turn', { name: currentPlayerName ?? '' });
   };
-
-  useEffect(() => {
-    const result = checkWinner(board);
-
-    if (result && result !== 'draw') {
-      dispatch(setWinner(result));
-    } else if (result === 'draw') {
-      dispatch(setWinner('draw'));
-    }
-  }, [board]);
 
   useEffect(() => {
     if (gameMode === 'ai') return;
@@ -113,7 +86,7 @@ export default function PlayScreen() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [board, currentPlayer, isGameOver, gameMode]);
+  }, [board, currentPlayer, isGameOver, gameMode, aiSymbol, difficulty]);
 
   useEffect(() => {
     if (gameState.gameMode !== 'multiplayer') return;
@@ -144,7 +117,11 @@ export default function PlayScreen() {
               ]}>
               <Text style={styles.playerName}>{player1?.name}</Text>
               <View style={[styles.symbolBadge, { backgroundColor: 'rgba(129, 140, 248, 0.2)' }]}>
-                <Text style={[styles.symbolText, { color: '#818CF8' }]}>X</Text>
+                {isAITurn && player1?.symbol === 'X' ? (
+                  <ActivityIndicator size="small" color="#818CF8" />
+                ) : (
+                  <Text style={[styles.symbolText, { color: '#818CF8' }]}>X</Text>
+                )}
               </View>
             </View>
 
@@ -159,7 +136,11 @@ export default function PlayScreen() {
               ]}>
               <Text style={styles.playerName}>{player2?.name}</Text>
               <View style={[styles.symbolBadge, { backgroundColor: 'rgba(244, 114, 182, 0.2)' }]}>
-                <Text style={[styles.symbolText, { color: '#F472B6' }]}>O</Text>
+                {isAITurn && player2?.symbol === 'O' ? (
+                  <ActivityIndicator size="small" color="#F472B6" />
+                ) : (
+                  <Text style={[styles.symbolText, { color: '#F472B6' }]}>O</Text>
+                )}
               </View>
             </View>
           </View>
