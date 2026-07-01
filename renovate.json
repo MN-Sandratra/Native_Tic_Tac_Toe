@@ -1,0 +1,73 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "schedule": ["before 9am on monday"],
+  "timezone": "Europe/Paris",
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 5,
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "description": "Group all Expo SDK packages — they must be updated together",
+      "matchPackagePrefixes": ["expo", "@expo"],
+      "groupName": "Expo SDK",
+      "automerge": false
+    },
+    {
+      "description": "Group React Native ecosystem — tightly coupled with Expo SDK",
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "react-native",
+        "react-native-web",
+        "react-native-reanimated",
+        "react-native-safe-area-context",
+        "react-native-screens",
+        "react-native-svg"
+      ],
+      "groupName": "React Native ecosystem",
+      "automerge": false
+    },
+    {
+      "description": "Group Redux packages and auto-merge minor/patch",
+      "matchPackageNames": [
+        "@reduxjs/toolkit",
+        "react-redux",
+        "redux-logger",
+        "redux-persist"
+      ],
+      "groupName": "Redux",
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    },
+    {
+      "description": "Group ESLint and formatting tools and auto-merge",
+      "matchPackagePrefixes": ["eslint", "@typescript-eslint"],
+      "matchPackageNames": [
+        "prettier",
+        "eslint-config-prettier",
+        "eslint-plugin-react",
+        "eslint-plugin-react-hooks",
+        "eslint-plugin-unused-imports",
+        "typescript-eslint"
+      ],
+      "groupName": "Linting & formatting",
+      "automerge": true
+    },
+    {
+      "description": "Auto-merge patch updates for all devDependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
+    {
+      "description": "Never auto-merge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true
+  }
+}
